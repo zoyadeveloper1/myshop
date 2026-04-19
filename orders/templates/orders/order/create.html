@@ -1,0 +1,120 @@
+{% extends "shop/base.html" %}
+{% load static %}
+
+{% block title %}Checkout{% endblock %}
+
+{% block content %}
+
+<style>
+
+/* ===== PAGE ===== */
+.checkout-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+}
+
+/* ===== CARD ===== */
+.card-box {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+/* ===== HEADINGS ===== */
+.card-box h2 {
+    margin-bottom: 20px;
+}
+
+/* ===== FORM ===== */
+.order-form input,
+.order-form select,
+.order-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+/* ===== BUTTON ===== */
+.btn-order {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(45deg, #0d6efd, #6610f2);
+    color: white;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-order:hover {
+    transform: scale(1.03);
+}
+
+/* ===== ORDER LIST ===== */
+.order-list li {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.total-box {
+    font-weight: bold;
+    font-size: 18px;
+    margin-top: 15px;
+}
+
+/* ===== MOBILE ===== */
+@media(max-width: 768px){
+    .checkout-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+</style>
+
+
+<h1 class="mb-4">🧾 Checkout</h1>
+
+<div class="checkout-container">
+
+    <!-- 🔥 LEFT: FORM -->
+    <div class="card-box">
+        <h2>Shipping Details</h2>
+
+        <form method="post" class="order-form">
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+            <button type="submit" class="btn-order">
+                🚀 Place Order
+            </button>
+        </form>
+    </div>
+
+
+    <!-- 🔥 RIGHT: ORDER SUMMARY -->
+    <div class="card-box">
+        <h2>Your Order</h2>
+
+        <ul class="order-list">
+            {% for item in cart %}
+            <li>
+                <span>{{ item.product.name }} (x{{ item.quantity }})</span>
+                <span>₹{{ item.total_price }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+
+        <div class="total-box">
+            Total: ₹{{ cart.get_total_price }}
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
