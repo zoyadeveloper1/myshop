@@ -3,6 +3,9 @@
 A modern and responsive **E-Commerce Web Application** built using Python and Django.
 AakashKart allows users to browse products, manage their cart, place orders, and complete the shopping process through a simple and user-friendly interface.
 
+![alt text](image.png)
+
+
 ## 🚀 Features
 
 ### 👤 User Features
@@ -26,6 +29,9 @@ AakashKart allows users to browse products, manage their cart, place orders, and
 * Product Categories
 * Product Images
 * Product Price Display
+
+
+![alt text](image-1.png)
 
 ### 🔐 Admin Features
 
