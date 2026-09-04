@@ -1,6 +1,8 @@
 # 🛍️ online shopping
 
-online shopping is a responsive **online shopping  Web Application** developed using **Python, Django, MySQL, HTML, CSS, Bootstrap, and JavaScript**.
+online shopping is a responsive **online shopping  Web Application** developed using **Python, Django, MySQL, HTML, CSS, Bootstrap, and JavaScript**
+
+![alt text](image.png)
 
 ## 🚀 Features
 
@@ -15,6 +17,10 @@ online shopping is a responsive **online shopping  Web Application** developed u
 * 🖼️ Product Images
 * 🛠️ Django Admin Panel
 * 📱 Responsive & Modern UI
+
+![alt text](image-1.png)
+
+
 
 ## 🛠️ Technologies Used
 
