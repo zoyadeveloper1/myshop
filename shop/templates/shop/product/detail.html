@@ -1,24 +1,667 @@
+```html
 {% extends "shop/base.html" %}
+
 {% load static %}
+
 {% block title %}
-{{ product.name }}
+    {{ product.name }} | AakashKart
 {% endblock %}
+
+
 {% block content %}
-<div class="product-detail">
-    <img src="{% if product.image %}{{ product.image.url }}
-    {% else %}{% static "img/no_image.png" %}{% endif %}">
-    <h1>{{ product.name }}</h1>
-    <h2>
-        <a href="{{ product.category.get_absolute_url }}">
-            {{ product.category }}
+
+<style>
+
+/* =========================================
+   PRODUCT DETAIL PAGE
+========================================= */
+
+.product-detail-page {
+    padding: 20px 0 60px;
+}
+
+
+/* =========================================
+   BREADCRUMB
+========================================= */
+
+.product-breadcrumb {
+    margin-bottom: 22px;
+
+    font-size: 14px;
+
+    color: #777;
+}
+
+.product-breadcrumb a {
+    color: #0d6efd;
+
+    text-decoration: none;
+
+    font-weight: 600;
+}
+
+
+/* =========================================
+   PRODUCT CONTAINER
+========================================= */
+
+.product-detail {
+    display: grid;
+
+    grid-template-columns: 1.05fr .95fr;
+
+    gap: 45px;
+
+    background: white;
+
+    padding: 30px;
+
+    border-radius: 25px;
+
+    border: 1px solid #eee;
+
+    box-shadow:
+        0 12px 35px rgba(0,0,0,.08);
+
+    overflow: hidden;
+}
+
+
+/* =========================================
+   IMAGE SECTION
+========================================= */
+
+.product-gallery {
+    position: relative;
+
+    background: #f6f7fb;
+
+    border-radius: 20px;
+
+    min-height: 500px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    overflow: hidden;
+}
+
+.product-gallery img {
+    width: 100%;
+
+    height: 500px;
+
+    object-fit: contain;
+
+    padding: 25px;
+
+    transition: transform .5s ease;
+}
+
+.product-gallery:hover img {
+    transform: scale(1.05);
+}
+
+
+/* NEW BADGE */
+
+.detail-badge {
+    position: absolute;
+
+    top: 18px;
+
+    left: 18px;
+
+    background: #111;
+
+    color: white;
+
+    padding: 7px 14px;
+
+    border-radius: 50px;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    letter-spacing: .5px;
+
+    z-index: 2;
+}
+
+
+/* =========================================
+   PRODUCT INFO
+========================================= */
+
+.product-info {
+    padding: 10px 5px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+}
+
+
+/* CATEGORY */
+
+.product-category {
+    display: inline-block;
+
+    width: fit-content;
+
+    padding: 7px 13px;
+
+    border-radius: 50px;
+
+    background: #eef4ff;
+
+    color: #0d6efd;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    margin-bottom: 15px;
+}
+
+.product-category a {
+    color: inherit;
+
+    text-decoration: none;
+}
+
+
+/* PRODUCT NAME */
+
+.product-info h1 {
+    font-size: 38px;
+
+    line-height: 1.15;
+
+    font-weight: 800;
+
+    color: #171717;
+
+    margin-bottom: 15px;
+}
+
+
+/* RATING */
+
+.product-rating {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    margin-bottom: 15px;
+
+    font-size: 14px;
+
+    color: #777;
+}
+
+.stars {
+    color: #ffc107;
+
+    letter-spacing: 2px;
+}
+
+
+/* PRICE */
+
+.product-price {
+    font-size: 34px;
+
+    font-weight: 800;
+
+    color: #198754;
+
+    margin-bottom: 20px;
+}
+
+
+/* DIVIDER */
+
+.product-divider {
+    height: 1px;
+
+    background: #eee;
+
+    margin: 5px 0 20px;
+}
+
+
+/* DESCRIPTION */
+
+.product-description {
+    color: #666;
+
+    line-height: 1.8;
+
+    font-size: 15px;
+
+    margin-bottom: 25px;
+}
+
+
+/* =========================================
+   QUANTITY FORM
+========================================= */
+
+.cart-form {
+    background: #f8f9fc;
+
+    padding: 18px;
+
+    border-radius: 15px;
+
+    border: 1px solid #eee;
+}
+
+
+/* Django cart form */
+
+.cart-form input,
+.cart-form select {
+    max-width: 100%;
+
+    padding: 9px 12px;
+
+    border: 1px solid #ddd;
+
+    border-radius: 8px;
+
+    margin-bottom: 10px;
+}
+
+
+/* =========================================
+   ADD TO CART
+========================================= */
+
+.add-cart-btn {
+    width: 100%;
+
+    border: none;
+
+    padding: 14px;
+
+    border-radius: 12px;
+
+    background: linear-gradient(
+        135deg,
+        #0d6efd,
+        #6610f2
+    );
+
+    color: white;
+
+    font-size: 16px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: all .3s ease;
+
+    box-shadow:
+        0 8px 20px rgba(13,110,253,.22);
+}
+
+.add-cart-btn:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 13px 25px rgba(13,110,253,.3);
+}
+
+
+/* =========================================
+   BENEFITS
+========================================= */
+
+.product-benefits {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 10px;
+
+    margin-top: 20px;
+}
+
+.benefit {
+    text-align: center;
+
+    padding: 13px 8px;
+
+    background: #f8f9fa;
+
+    border-radius: 12px;
+
+    font-size: 12px;
+
+    color: #555;
+}
+
+.benefit-icon {
+    display: block;
+
+    font-size: 22px;
+
+    margin-bottom: 5px;
+}
+
+
+/* =========================================
+   DESCRIPTION BOX
+========================================= */
+
+.description-box {
+    margin-top: 30px;
+
+    background: white;
+
+    padding: 25px;
+
+    border-radius: 18px;
+
+    border: 1px solid #eee;
+
+    box-shadow:
+        0 7px 22px rgba(0,0,0,.05);
+}
+
+.description-box h3 {
+    font-size: 21px;
+
+    font-weight: 800;
+
+    margin-bottom: 15px;
+}
+
+.description-box p {
+    color: #666;
+
+    line-height: 1.8;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 850px) {
+
+    .product-detail {
+        grid-template-columns: 1fr;
+
+        gap: 25px;
+
+        padding: 20px;
+    }
+
+    .product-gallery {
+        min-height: 380px;
+    }
+
+    .product-gallery img {
+        height: 380px;
+    }
+
+    .product-info h1 {
+        font-size: 30px;
+    }
+
+}
+
+
+@media (max-width: 500px) {
+
+    .product-detail-page {
+        padding-top: 10px;
+    }
+
+    .product-detail {
+        border-radius: 18px;
+
+        padding: 12px;
+    }
+
+    .product-gallery {
+        min-height: 300px;
+
+        border-radius: 15px;
+    }
+
+    .product-gallery img {
+        height: 300px;
+
+        padding: 15px;
+    }
+
+    .product-info {
+        padding: 10px;
+    }
+
+    .product-info h1 {
+        font-size: 26px;
+    }
+
+    .product-price {
+        font-size: 28px;
+    }
+
+    .product-benefits {
+        grid-template-columns: 1fr 1fr 1fr;
+
+        gap: 6px;
+    }
+
+    .benefit {
+        font-size: 10px;
+    }
+
+}
+
+</style>
+
+
+<div class="product-detail-page">
+
+
+    <!-- =====================================
+         BREADCRUMB
+    ====================================== -->
+
+    <div class="product-breadcrumb">
+
+        <a href="{% url 'shop:product_list' %}">
+            Products
         </a>
-    </h2>
-    <p class="price">${{ product.price }}</p>
-    <form action="{% url 'cart:cart_add' product.id %}" method="post">
-        {{ cart_product_form }}
-        {% csrf_token %}
-        <input type="submit" value="Add to cart">
-    </form>
-    {{ product.description|linebreaks }}
+
+        &nbsp; / &nbsp;
+
+        {{ product.name }}
+
+    </div>
+
+
+    <!-- =====================================
+         PRODUCT DETAIL
+    ====================================== -->
+
+    <div class="product-detail">
+
+
+        <!-- ================= IMAGE ================= -->
+
+        <div class="product-gallery">
+
+            <span class="detail-badge">
+                ✨ NEW
+            </span>
+
+            <img
+                src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'img/no_image.png' %}{% endif %}"
+                alt="{{ product.name }}"
+            >
+
+        </div>
+
+
+        <!-- ================= INFO ================= -->
+
+        <div class="product-info">
+
+
+            <!-- CATEGORY -->
+
+            <div class="product-category">
+
+                🏷️
+
+                <a href="{{ product.category.get_absolute_url }}">
+                    {{ product.category }}
+                </a>
+
+            </div>
+
+
+            <!-- NAME -->
+
+            <h1>
+                {{ product.name }}
+            </h1>
+
+
+            <!-- RATING -->
+
+            <div class="product-rating">
+
+                <span class="stars">
+                    ★★★★★
+                </span>
+
+                <span>
+                    Trusted Product
+                </span>
+
+            </div>
+
+
+            <!-- PRICE -->
+
+            <div class="product-price">
+                ₹{{ product.price }}
+            </div>
+
+
+            <div class="product-divider"></div>
+
+
+            <!-- DESCRIPTION -->
+
+            <div class="product-description">
+
+                {{ product.description|linebreaks }}
+
+            </div>
+
+
+            <!-- CART -->
+
+            <form
+                action="{% url 'cart:cart_add' product.id %}"
+                method="post"
+                class="cart-form"
+            >
+
+                {% csrf_token %}
+
+                {{ cart_product_form }}
+
+                <button
+                    type="submit"
+                    class="add-cart-btn"
+                >
+                    🛒 Add to Cart
+                </button>
+
+            </form>
+
+
+            <!-- BENEFITS -->
+
+            <div class="product-benefits">
+
+                <div class="benefit">
+
+                    <span class="benefit-icon">
+                        🚚
+                    </span>
+
+                    Fast Delivery
+
+                </div>
+
+
+                <div class="benefit">
+
+                    <span class="benefit-icon">
+                        🔒
+                    </span>
+
+                    Secure Payment
+
+                </div>
+
+
+                <div class="benefit">
+
+                    <span class="benefit-icon">
+                        ↩️
+                    </span>
+
+                    Easy Returns
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================
+         PRODUCT DESCRIPTION
+    ====================================== -->
+
+    <div class="description-box">
+
+        <h3>
+            📦 Product Details
+        </h3>
+
+        <p>
+            {{ product.description }}
+        </p>
+
+    </div>
+
+
 </div>
+
 {% endblock %}
+```

@@ -1,36 +1,738 @@
+```html
 {% extends "shop/base.html" %}
+
 {% load static %}
+
 {% block title %}
-{% if category %}{{ category.name }}{% else %}Products{% endif %}
+    {% if category %}
+        {{ category.name }} | AakashKart
+    {% else %}
+        Products | AakashKart
+    {% endif %}
 {% endblock %}
+
+
 {% block content %}
-<div id="sidebar">
-    <h3>Categories</h3>
-    <ul>
-        <li {% if not category %}class="selected" {% endif %}>
-            <a href="{% url 'shop:product_list' %}">All</a>
-        </li>
-        {% for c in categories %}
-        <li {% if category.slug == c.slug %}class="selected" 
-        {% endif %}>
-            <a href="{{ c.get_absolute_url }}">{{ c.name }}</a>
-        </li>
-        {% endfor %}
-    </ul>
+
+<style>
+
+/* =========================================
+   PAGE
+========================================= */
+
+.products-page {
+    padding: 15px 0 50px;
+}
+
+
+/* =========================================
+   PAGE HEADER
+========================================= */
+
+.page-header {
+    background: linear-gradient(
+        135deg,
+        #0d6efd,
+        #6610f2,
+        #d63384
+    );
+
+    color: white;
+
+    padding: 35px 30px;
+
+    border-radius: 22px;
+
+    margin-bottom: 30px;
+
+    position: relative;
+
+    overflow: hidden;
+}
+
+.page-header::after {
+    content: "";
+
+    position: absolute;
+
+    width: 220px;
+    height: 220px;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,.08);
+
+    right: -70px;
+    top: -80px;
+}
+
+.page-header h1 {
+    font-size: 32px;
+
+    font-weight: 800;
+
+    margin: 0;
+
+    position: relative;
+
+    z-index: 2;
+}
+
+.page-header p {
+    margin: 8px 0 0;
+
+    opacity: .9;
+
+    position: relative;
+
+    z-index: 2;
+}
+
+
+/* =========================================
+   LAYOUT
+========================================= */
+
+.products-layout {
+    display: grid;
+
+    grid-template-columns: 230px 1fr;
+
+    gap: 30px;
+
+    align-items: start;
+}
+
+
+/* =========================================
+   SIDEBAR
+========================================= */
+
+#sidebar {
+    background: white;
+
+    border-radius: 18px;
+
+    padding: 22px;
+
+    box-shadow:
+        0 8px 25px rgba(0,0,0,.07);
+
+    border: 1px solid #eee;
+
+    position: sticky;
+
+    top: 90px;
+}
+
+#sidebar h3 {
+    font-size: 19px;
+
+    font-weight: 800;
+
+    margin-bottom: 18px;
+
+    color: #222;
+}
+
+#sidebar ul {
+    list-style: none;
+
+    padding: 0;
+
+    margin: 0;
+}
+
+#sidebar li {
+    margin-bottom: 7px;
+}
+
+#sidebar a {
+    display: block;
+
+    padding: 10px 13px;
+
+    border-radius: 10px;
+
+    color: #555;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    transition: .3s;
+}
+
+#sidebar a:hover {
+    background: #f0f4ff;
+
+    color: #0d6efd;
+
+    transform: translateX(4px);
+}
+
+
+/* SELECTED CATEGORY */
+
+#sidebar li.selected a {
+    background: linear-gradient(
+        135deg,
+        #0d6efd,
+        #6610f2
+    );
+
+    color: white;
+
+    box-shadow:
+        0 6px 15px rgba(13,110,253,.25);
+}
+
+
+/* =========================================
+   MAIN
+========================================= */
+
+#main {
+    min-width: 0;
+}
+
+.products-heading {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 20px;
+}
+
+.products-heading h2 {
+    font-size: 24px;
+
+    font-weight: 800;
+
+    margin: 0;
+
+    color: #222;
+}
+
+.products-heading span {
+    font-size: 13px;
+
+    color: #777;
+}
+
+
+/* =========================================
+   PRODUCT GRID
+========================================= */
+
+.product-list {
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fill, minmax(210px, 1fr));
+
+    gap: 22px;
+}
+
+
+/* =========================================
+   PRODUCT CARD
+========================================= */
+
+.product-card {
+    background: white;
+
+    border-radius: 18px;
+
+    overflow: hidden;
+
+    border: 1px solid #eee;
+
+    box-shadow:
+        0 7px 22px rgba(0,0,0,.07);
+
+    transition:
+        transform .3s ease,
+        box-shadow .3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-7px);
+
+    box-shadow:
+        0 16px 35px rgba(0,0,0,.13);
+}
+
+
+/* =========================================
+   PRODUCT IMAGE
+========================================= */
+
+.product-image {
+    position: relative;
+
+    background: #f5f6fa;
+
+    overflow: hidden;
+}
+
+.product-image img {
+    width: 100%;
+
+    height: 210px;
+
+    object-fit: cover;
+
+    display: block;
+
+    transition: transform .5s ease;
+}
+
+.product-card:hover .product-image img {
+    transform: scale(1.08);
+}
+
+
+/* NEW BADGE */
+
+.product-badge {
+    position: absolute;
+
+    top: 12px;
+
+    left: 12px;
+
+    background: #111;
+
+    color: white;
+
+    padding: 5px 10px;
+
+    border-radius: 50px;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    letter-spacing: .5px;
+}
+
+
+/* =========================================
+   PRODUCT BODY
+========================================= */
+
+.product-body {
+    padding: 17px;
+}
+
+.product-body h5 {
+    font-size: 16px;
+
+    font-weight: 700;
+
+    margin-bottom: 8px;
+
+    color: #222;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+.product-price {
+    color: #198754;
+
+    font-size: 18px;
+
+    font-weight: 800;
+
+    margin-bottom: 13px;
+}
+
+
+/* =========================================
+   VIEW PRODUCT BUTTON
+========================================= */
+
+.view-product {
+    display: block;
+
+    width: 100%;
+
+    text-align: center;
+
+    padding: 9px;
+
+    border-radius: 10px;
+
+    background: linear-gradient(
+        135deg,
+        #0d6efd,
+        #6610f2
+    );
+
+    color: white;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    transition: .3s;
+}
+
+.view-product:hover {
+    color: white;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 7px 18px rgba(13,110,253,.3);
+}
+
+
+/* =========================================
+   EMPTY PRODUCTS
+========================================= */
+
+.empty-products {
+    grid-column: 1 / -1;
+
+    text-align: center;
+
+    padding: 70px 20px;
+
+    background: white;
+
+    border-radius: 18px;
+
+    border: 1px solid #eee;
+
+    box-shadow:
+        0 7px 20px rgba(0,0,0,.05);
+}
+
+.empty-products .empty-icon {
+    font-size: 45px;
+
+    margin-bottom: 12px;
+}
+
+.empty-products h3 {
+    font-size: 21px;
+
+    font-weight: 700;
+
+    color: #444;
+}
+
+.empty-products p {
+    color: #777;
+
+    margin-bottom: 20px;
+}
+
+.shop-all {
+    display: inline-block;
+
+    padding: 10px 20px;
+
+    border-radius: 50px;
+
+    background: #0d6efd;
+
+    color: white;
+
+    text-decoration: none;
+
+    font-weight: 600;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 900px) {
+
+    .products-layout {
+        grid-template-columns: 190px 1fr;
+
+        gap: 20px;
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .products-layout {
+        grid-template-columns: 1fr;
+    }
+
+    #sidebar {
+        position: static;
+    }
+
+    #sidebar ul {
+        display: flex;
+
+        flex-wrap: wrap;
+
+        gap: 7px;
+    }
+
+    #sidebar li {
+        margin: 0;
+    }
+
+    #sidebar a {
+        padding: 8px 12px;
+    }
+
+}
+
+
+@media (max-width: 500px) {
+
+    .page-header {
+        padding: 28px 20px;
+
+        border-radius: 18px;
+    }
+
+    .page-header h1 {
+        font-size: 25px;
+    }
+
+    .product-list {
+        grid-template-columns: repeat(2, 1fr);
+
+        gap: 12px;
+    }
+
+    .product-image img {
+        height: 165px;
+    }
+
+    .product-body {
+        padding: 12px;
+    }
+
+    .product-body h5 {
+        font-size: 14px;
+    }
+
+    .product-price {
+        font-size: 16px;
+    }
+
+}
+
+</style>
+
+
+<div class="products-page">
+
+
+    <!-- =====================================
+         PAGE HEADER
+    ====================================== -->
+
+    <div class="page-header">
+
+        <h1>
+            {% if category %}
+                🛍️ {{ category.name }}
+            {% else %}
+                🛍️ All Products
+            {% endif %}
+        </h1>
+
+        <p>
+            Discover amazing products at the best prices ✨
+        </p>
+
+    </div>
+
+
+    <!-- =====================================
+         SIDEBAR + PRODUCTS
+    ====================================== -->
+
+    <div class="products-layout">
+
+
+        <!-- ================= SIDEBAR ================= -->
+
+        <aside id="sidebar">
+
+            <h3>
+                📂 Categories
+            </h3>
+
+            <ul>
+
+                <!-- ALL -->
+
+                <li {% if not category %}class="selected"{% endif %}>
+
+                    <a href="{% url 'shop:product_list' %}">
+                        ✨ All Products
+                    </a>
+
+                </li>
+
+
+                <!-- CATEGORIES -->
+
+                {% for c in categories %}
+
+                <li
+                    {% if category.slug == c.slug %}
+                        class="selected"
+                    {% endif %}
+                >
+
+                    <a href="{{ c.get_absolute_url }}">
+                        {{ c.name }}
+                    </a>
+
+                </li>
+
+                {% endfor %}
+
+            </ul>
+
+        </aside>
+
+
+        <!-- ================= MAIN ================= -->
+
+        <main id="main">
+
+
+            <div class="products-heading">
+
+                <h2>
+                    {% if category %}
+                        {{ category.name }}
+                    {% else %}
+                        Trending Products 🔥
+                    {% endif %}
+                </h2>
+
+                <span>
+                    Shop Now ✨
+                </span>
+
+            </div>
+
+
+            <!-- PRODUCT GRID -->
+
+            <div class="product-list">
+
+                {% for product in products %}
+
+
+                <div class="product-card">
+
+
+                    <!-- IMAGE -->
+
+                    <div class="product-image">
+
+                        <a href="{{ product.get_absolute_url }}">
+
+                            <img
+                                src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'img/no_image.png' %}{% endif %}"
+                                alt="{{ product.name }}"
+                            >
+
+                        </a>
+
+
+                        <span class="product-badge">
+                            NEW
+                        </span>
+
+                    </div>
+
+
+                    <!-- DETAILS -->
+
+                    <div class="product-body">
+
+                        <h5 title="{{ product.name }}">
+                            {{ product.name }}
+                        </h5>
+
+
+                        <div class="product-price">
+                            ₹{{ product.price }}
+                        </div>
+
+
+                        <a
+                            href="{{ product.get_absolute_url }}"
+                            class="view-product"
+                        >
+                            View Product →
+                        </a>
+
+                    </div>
+
+
+                </div>
+
+
+                {% empty %}
+
+
+                <!-- EMPTY -->
+
+                <div class="empty-products">
+
+                    <div class="empty-icon">
+                        😢
+                    </div>
+
+                    <h3>
+                        No products found
+                    </h3>
+
+                    <p>
+                        We couldn't find any products in this category.
+                    </p>
+
+                    <a
+                        href="{% url 'shop:product_list' %}"
+                        class="shop-all"
+                    >
+                        View All Products
+                    </a>
+
+                </div>
+
+
+                {% endfor %}
+
+            </div>
+
+        </main>
+
+    </div>
+
 </div>
-<div id="main" class="product-list">
-    <h1>{% if category %}{{ category.name }}{% else %}Products
-        {% endif %}</h1>
-    {% for product in products %}
-    <div class="card" style="width: 18rem;">
-  <img src="{% if product.image %}{{ product.image.url }}{% else %}
-            {%static  'img/no_image.png'%}{% endif %}" class="card-img-top" alt="...">
-  <div class="card-body">
-    <h5 class="card-title">{{ product.name }}</h5>
-    <p class="card-text">Price : ${{ product.price }}</p>
-    <a href="{{ product.get_absolute_url }}" class="btn btn-primary">{{ product.name }}</a>
-  </div>
-</div>
-     {% endfor %}
-</div>
+
 {% endblock %}
+```

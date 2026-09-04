@@ -1,5 +1,7 @@
+```html
 {% load static %}
 {% load bootstrap5 %}
+
 {% bootstrap_css %}
 {% bootstrap_javascript %}
 
@@ -7,82 +9,409 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8" />
-    <title>{% block title %}My Shop{% endblock %}</title>
+
+    <meta charset="utf-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>{% block title %}AakashKart{% endblock %}</title>
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
 
     <style>
+
+        /* =========================
+           BODY
+        ========================= */
+
         body {
-            background: #f5f7fa;
+            background: #f6f7fb;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #212529;
+            margin: 0;
         }
 
-        /* Navbar */
+
+        /* =========================
+           NAVBAR
+        ========================= */
+
         .navbar-custom {
-            background: linear-gradient(45deg, #0d6efd, #6610f2);
-            padding: 10px 20px;
+            background: linear-gradient(
+                135deg,
+                #0d6efd,
+                #6610f2,
+                #d63384
+            );
+
+            padding: 12px 25px;
+
+            box-shadow:
+                0 8px 25px rgba(0, 0, 0, .12);
+
+            position: sticky;
+            top: 0;
+            z-index: 999;
+
+            backdrop-filter: blur(10px);
         }
+
+
+        /* =========================
+           BRAND
+        ========================= */
 
         .navbar-brand {
-            color: white !important;
-            font-weight: bold;
-            font-size: 22px;
+            color: #fff !important;
+
+            font-size: 24px;
+            font-weight: 800;
+
+            letter-spacing: -.5px;
+
+            transition: .3s;
         }
+
+        .navbar-brand:hover {
+            transform: scale(1.04);
+        }
+
+
+        /* =========================
+           NAV LINKS
+        ========================= */
 
         .nav-link {
-            color: white !important;
-            margin-left: 15px;
-        }
+            color: rgba(255,255,255,.9) !important;
 
-        /* Cart badge */
-        .cart-box {
-            background: white;
-            padding: 5px 12px;
+            margin-left: 12px;
+
+            padding: 8px 14px !important;
+
             border-radius: 20px;
-            font-size: 14px;
+
+            font-weight: 500;
+
+            transition: .3s;
         }
 
-        /* Content */
-        #content {
-            padding: 20px;
+        .nav-link:hover {
+            background: rgba(255,255,255,.15);
+            color: #fff !important;
+            transform: translateY(-2px);
         }
+
+
+        /* =========================
+           NAV RIGHT
+        ========================= */
+
+        .navbar-right {
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+        }
+
+
+        /* =========================
+           CART
+        ========================= */
+
+        .cart-box {
+            display: flex;
+
+            align-items: center;
+
+            gap: 6px;
+
+            background: rgba(255,255,255,.96);
+
+            padding: 8px 15px;
+
+            border-radius: 50px;
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            box-shadow:
+                0 5px 15px rgba(0,0,0,.12);
+
+            transition: .3s;
+        }
+
+        .cart-box:hover {
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 8px 20px rgba(0,0,0,.18);
+        }
+
+        .cart-box a {
+            color: #0d6efd;
+
+            text-decoration: none;
+        }
+
+
+        /* =========================
+           CART ICON
+        ========================= */
+
+        .cart-icon {
+            font-size: 18px;
+        }
+
+
+        /* =========================
+           CART COUNT
+        ========================= */
+
+        .cart-count {
+            background: #dc3545;
+
+            color: white;
+
+            min-width: 20px;
+            height: 20px;
+
+            display: inline-flex;
+
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 50%;
+
+            font-size: 11px;
+
+            font-weight: bold;
+        }
+
+
+        /* =========================
+           MAIN CONTENT
+        ========================= */
+
+        #content {
+            padding: 25px 15px 50px;
+            min-height: 80vh;
+        }
+
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        .footer {
+            background: #111827;
+
+            color: #cbd5e1;
+
+            text-align: center;
+
+            padding: 25px 15px;
+
+            margin-top: 30px;
+        }
+
+        .footer strong {
+            color: white;
+        }
+
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 768px) {
+
+            .navbar-custom {
+                padding: 10px 15px;
+            }
+
+            .navbar-brand {
+                font-size: 20px;
+            }
+
+            .cart-box {
+                padding: 7px 12px;
+                font-size: 13px;
+            }
+
+            #content {
+                padding: 15px 10px 40px;
+            }
+        }
+
     </style>
 
 </head>
 
+
 <body>
 
-<!-- 🔥 NAVBAR -->
+
+<!-- =========================
+     NAVBAR
+========================= -->
+
 <nav class="navbar navbar-expand-lg navbar-custom">
-    <a class="navbar-brand" href="/">🛍 MyShop</a>
 
-    <div class="ms-auto d-flex align-items-center">
+    <div class="container-fluid">
 
-        <!-- Cart -->
-        <div class="cart-box">
-            {% with total_items=cart|length %}
-                {% if total_items > 0 %}
-                    <a href="{% url 'cart:cart_detail' %}" style="text-decoration:none;">
-                        🛒 {{ total_items }} item{{ total_items|pluralize }} |
-                        ₹{{ cart.get_total_price }}
-                    </a>
-                {% else %}
-                    🛒 Cart Empty
-                {% endif %}
-            {% endwith %}
+
+        <!-- BRAND -->
+
+        <a class="navbar-brand" href="/">
+            🛍️ AakashKart
+        </a>
+
+
+        <!-- MOBILE BUTTON -->
+
+        <button
+            class="navbar-toggler bg-light"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarContent"
+        >
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+
+        <!-- NAV CONTENT -->
+
+        <div
+            class="collapse navbar-collapse"
+            id="navbarContent"
+        >
+
+
+            <!-- NAV LINKS -->
+
+            <div class="navbar-nav ms-auto align-items-lg-center">
+
+
+                <a
+                    class="nav-link"
+                    href="/"
+                >
+                    🏠 Home
+                </a>
+
+
+                <a
+                    class="nav-link"
+                    href="#"
+                >
+                    🛍️ Products
+                </a>
+
+
+                <a
+                    class="nav-link"
+                    href="#"
+                >
+                    📞 Contact
+                </a>
+
+
+                <!-- CART -->
+
+                <div class="cart-box mt-2 mt-lg-0">
+
+                    {% with total_items=cart|length %}
+
+                        {% if total_items > 0 %}
+
+                            <a
+                                href="{% url 'cart:cart_detail' %}"
+                            >
+
+                                <span class="cart-icon">
+                                    🛒
+                                </span>
+
+                                Cart
+
+                                <span class="cart-count">
+                                    {{ total_items }}
+                                </span>
+
+                                <span>
+                                    ₹{{ cart.get_total_price }}
+                                </span>
+
+                            </a>
+
+                        {% else %}
+
+                            <span>
+                                🛒 Cart Empty
+                            </span>
+
+                        {% endif %}
+
+                    {% endwith %}
+
+                </div>
+
+
+            </div>
+
         </div>
 
     </div>
+
 </nav>
 
 
-<!-- 🔥 MAIN CONTENT -->
-<div id="content" class="container">
+
+<!-- =========================
+     MAIN CONTENT
+========================= -->
+
+<main id="content" class="container">
+
     {% block content %}
+
     {% endblock %}
-</div>
+
+</main>
+
+
+
+<!-- =========================
+     FOOTER
+========================= -->
+
+<footer class="footer">
+
+    <div>
+
+        🛍️ <strong>AakashKart</strong>
+
+        <br>
+
+        <small>
+            Shop smarter. Discover better. ✨
+        </small>
+
+        <br><br>
+
+        <small>
+            © 2026 AakashKart. All Rights Reserved.
+        </small>
+
+    </div>
+
+</footer>
 
 
 </body>
+
 </html>
+```
